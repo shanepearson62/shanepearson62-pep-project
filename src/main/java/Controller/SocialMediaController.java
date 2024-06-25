@@ -60,10 +60,10 @@ public class SocialMediaController {
         return app;
     }
 
+    // Read the body, check for blank username, length of password, and duplicate username. then create acc and return it
     private void registerHandler(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Account account = mapper.readValue(ctx.body(), Account.class);
-        System.out.print("user: " +account.username + " pass: "+account.password);
         if (account.getUsername().isBlank() || account.getPassword().length() < 4 || accountService.existsByUsername(account.getUsername())) {
             ctx.status(400);
         } else {
@@ -73,6 +73,7 @@ public class SocialMediaController {
         }
     }
 
+    // Read the body and check if it is a registered account. return existing account
     private void loginHandler(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Account account = mapper.readValue(ctx.body(), Account.class);
@@ -85,6 +86,7 @@ public class SocialMediaController {
         }
     }
 
+    // read the body, check for blank message, check for length of message, and make sure the account is valid. then create message and return it
     private void postMessageHandler(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Message message = mapper.readValue(ctx.body(), Message.class);
@@ -99,12 +101,14 @@ public class SocialMediaController {
         }
     }
 
+    // Get and Return all current messages 
     private void getAllMessagesHandler(Context ctx) {
         List<Message> messages = messageService.getAllMessages();
         ctx.json(messages);
         ctx.status(200);
     }
 
+    // take in the message_id and find message with that id. return found message
     private void getMessageByID(Context ctx) {
         String holder = ctx.pathParam("message_id");
         int messageId = Integer.parseInt(holder);
@@ -115,6 +119,7 @@ public class SocialMediaController {
         ctx.status(200);
     }
 
+    // read in message_id and delete message with that id. return deleted message
     private void deleteMessageByID(Context ctx) {
         String holder = ctx.pathParam("message_id");
         int messageId = Integer.parseInt(holder);
@@ -125,6 +130,7 @@ public class SocialMediaController {
         ctx.status(200);
     }
 
+    // Take in the message and message_id, check for blank id and length of message. then update message and return it.
     private void updateMessageByID(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Message message = mapper.readValue(ctx.body(), Message.class);
@@ -144,6 +150,7 @@ public class SocialMediaController {
         }
     }
 
+    // take in the account_id, find all messages from that acc, and return them.
     private void getAllMessagesByAccount(Context ctx) {
         String holder = ctx.pathParam("account_id");
         int accountId = Integer.parseInt(holder);
